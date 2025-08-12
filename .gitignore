@@ -22,3 +22,5 @@ rad.json
 TestResults.xml
 .env
 .venv/*
+.ruff_cache/*
+__pycache__/*

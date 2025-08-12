@@ -2,12 +2,18 @@ import json
 import chromadb
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 client = OpenAI()
-chroma_client = chromadb.Client()
-collection = chroma_client.get_or_create_collection(name="book_summaries")
+chroma_client = chromadb.PersistentClient(path="./chroma/")
+collection = chroma_client.get_or_create_collection(
+    name="book_summaries",
+    configuration={
+        "hnsw": {
+            "space": "cosine",
+            "ef_construction": 200
+        }
+    })
 
 def load_books(json_file):
     with open(json_file, 'r', encoding='utf-8') as f:
@@ -27,7 +33,8 @@ def store_books(json_file):
         collection.add(
             documents=[book["summary"]],
             metadatas=[{"title": book["title"]}],
-            ids=[f"book_{i}"]
+            ids=[f"book_{i}"],
+            embeddings=[embedding]
         )
     print(f"Stored {len(books)} books into ChromaDB.")
 
