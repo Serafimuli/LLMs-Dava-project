@@ -1,3 +1,7 @@
-openai
-chromadb
-python-dotenv
+openai>=1.35.0
+chromadb>=0.5.5
+python-dotenv>=1.0.1
+streamlit>=1.36.0
+pydantic>=2.7.0
+pillow>=10.3.0
+soundfile>=0.12.1
