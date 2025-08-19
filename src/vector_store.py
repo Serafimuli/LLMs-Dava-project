@@ -3,7 +3,7 @@ import chromadb
 from chromadb.utils import embedding_functions
 from openai import OpenAI
 from dotenv import load_dotenv
-from .config import settings
+from config import settings
 
 load_dotenv()
 client = OpenAI(api_key=settings.openai_api_key)

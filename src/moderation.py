@@ -1,5 +1,5 @@
 from typing import Tuple
-from .config import settings
+from config import settings
 from openai import OpenAI
 
 _BAD_WORDS = {

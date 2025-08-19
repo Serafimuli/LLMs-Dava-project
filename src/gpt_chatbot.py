@@ -1,28 +1,28 @@
 from typing import Optional, Dict, Any
-from .config import settings
-from .retriever import search_books
-from .tools import get_summary_by_title
+from config import settings
+from retriever import search_books
+from tools import get_summary_by_title
 from openai import OpenAI
 
 client = OpenAI(api_key=settings.openai_api_key)
 
 SYSTEM_PROMPT = (
-    "Ești un asistent care recomandă cărți. "
-    "Fii concis, prietenos și specific. "
-    "Dacă recomandarea nu se potrivește perfect, explică de ce tot ar putea fi interesantă."
+    "You are an assistant that recommends books. "
+    "Be concise, friendly, and specific. "
+    "If the recommendation is not a perfect match, explain why it might still be interesting."
 )
 
 def recommend_with_rag(user_query: str) -> Dict[str, Any]:
     candidates = search_books(user_query, top_k=3)
     if not candidates:
-        return {"message": "Nu am găsit nicio recomandare pentru această cerere."}
+        return {"message": "I couldn't find any recommendations for this request."}
     best = candidates[0]
     user_prompt = (
-        f"Utilizatorul caută o carte pe tema: `{user_query}`.\n"
-        f"Candidatul cel mai bun: {best['title']}.\n"
-        f"Rezumat scurt: {best['summary']}\n"
-        f"Te rog oferă o recomandare conversațională (max 5-7 rânduri), "
-        f"apoi sugerează 1-2 teme cheie."
+        f"The user is looking for a book on the topic: `{user_query}`.\n"
+        f"Best candidate: {best['title']}.\n"
+        f"Short summary: {best['summary']}\n"
+        f"Please provide a conversational recommendation (max 5-7 lines), "
+        f"then suggest 1-2 key themes."
     )
     chat = client.chat.completions.create(
         model=settings.openai_chat_model,

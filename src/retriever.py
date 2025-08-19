@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict, Any
 import chromadb
-from .config import settings
+from config import settings
 from openai import OpenAI
 
 client = OpenAI(api_key=settings.openai_api_key)
