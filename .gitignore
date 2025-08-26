@@ -23,4 +23,5 @@ TestResults.xml
 .env
 .venv/*
 .ruff_cache/*
+src/__pycache__/*
 __pycache__/*

@@ -22,6 +22,6 @@ def check_openai_moderation(text: str) -> Tuple[bool, str]:
         )
         res = resp.results[0]
         return (res.flagged, str(res.categories))
-    except Exception as e:
+    except Exception:
         # Fail open to avoid blocking the app if moderation is unavailable
         return (False, "moderation_unavailable")

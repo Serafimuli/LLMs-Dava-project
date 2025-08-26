@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     openai_tts_voice: str = Field("alloy", env="OPENAI_TTS_VOICE")
     openai_stt_model: str = Field("whisper-1", env="OPENAI_STT_MODEL")
     openai_moderation_model: str = Field("omni-moderation-latest", env="OPENAI_MODERATION_MODEL")
+    openai_image_model: str = Field("gpt-image-1", env="OPENAI_IMAGE_MODEL")
 
     class Config:
         env_file = ".env"

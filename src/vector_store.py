@@ -1,6 +1,7 @@
-import json, os, re
+import json
+import os
+import re
 import chromadb
-from chromadb.utils import embedding_functions
 from openai import OpenAI
 from dotenv import load_dotenv
 from config import settings
@@ -21,7 +22,10 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
 
 def upsert_books(json_path: str, collection_name: str = "book_summaries") -> int:
     db = make_chroma()
-    col = db.get_or_create_collection(name=collection_name)
+    col = db.get_or_create_collection(
+        name=collection_name,
+        metadata={"hnsw:space": "cosine"}
+        )
     with open(json_path, "r", encoding="utf-8") as f:
         books = json.load(f)
 

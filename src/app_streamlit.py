@@ -46,15 +46,13 @@ if submit:
     else:
         with st.spinner("Searching for recommendation..."):
             result = recommend_with_rag(q)
-            if "title" not in result:
-                st.error(result["message"])
+            if not result.title:
+                st.error(result.message)
             else:
-                st.subheader(f"📖 Recommendation: {result['title']}")
-                st.write(result["message"])
-                with st.expander("📘 Full summary"):
-                    st.write(result["full_summary"])
-                st.session_state["last_title"] = result["title"]
-                st.session_state["last_text"]  = result["message"] + "\n\n" + result["full_summary"]
+                st.subheader(f"📖 Recommendation: {result.title}")
+                st.write(result.message)
+                st.session_state["last_title"] = result.title
+                st.session_state["last_text"]  = result.message
 
 st.divider()
 
@@ -104,17 +102,15 @@ if audio_file is not None and st.button("Transcribe and recommend"):
         else:
             with st.spinner("Searching for recommendation..."):
                 result = recommend_with_rag(transcribed)
-                if "title" not in result:
-                    st.error(result["message"])
+                if not result.title:
+                    st.error(result.message)
                 else:
-                    st.subheader(f"📖 Recommendation: {result['title']}")
-                    st.write(result["message"])
-                    with st.expander("📘 Full summary"):
-                        st.write(result["full_summary"])
-                    st.session_state["last_title"] = result["title"]
-                    st.session_state["last_text"]  = result["message"] + "\n\n" + result["full_summary"]
+                    st.subheader(f"📖 Recommendation: {result.title}")
+                    st.write(result.message)
+                    st.session_state["last_title"] = result.title
+                    st.session_state["last_text"]  = result.message
     except Exception as e:
-        st.error("Transcription failed. Check the Whisper model and file format.")
+        st.error(f"Transcription failed. Check the Whisper model and file format. Details: {e}")
 
 st.divider()
 
@@ -136,7 +132,7 @@ if gen_btn:
             prompt = (f"Representative image for the book '{title}'. "
                       f"Style: {custom_prompt}. No text, no logo.")
             img = client.images.generate(
-                model="gpt-image-1",
+                model=settings.openai_image_model,
                 prompt=prompt,
                 size="1024x1024",
                 n=1
@@ -144,32 +140,5 @@ if gen_btn:
             b64 = img.data[0].b64_json
             raw = base64.b64decode(b64)
             st.image(Image.open(io.BytesIO(raw)), caption=f"Generated for: {title}")
-        except Exception as e:
-            st.error("Image generation failed. Check access to the image model.")
-st.subheader("🖼️ Generate a representative image")
-prompt_hint = "suggestive cover in minimalist style"
-img_col1, img_col2 = st.columns([2,1])
-with img_col1:
-    custom_prompt = st.text_input("Prompt (optional)", value=prompt_hint)
-with img_col2:
-    gen_btn = st.button("Generate image")
-
-if gen_btn:
-    title = st.session_state.get("last_title")
-    if not title:
-        st.info("Ask for a recommendation first to get the title.")
-    else:
-        try:
-            prompt = (f"Representative image for the book '{title}'. "
-                      f"Style: {custom_prompt}. No text, no logo.")
-            img = client.images.generate(
-                model="gpt-image-1",
-                prompt=prompt,
-                size="1024x1024",
-                n=1
-            )
-            b64 = img.data[0].b64_json
-            raw = base64.b64decode(b64)
-            st.image(Image.open(io.BytesIO(raw)), caption=f"Generated for: {title}")
-        except Exception as e:
+        except Exception:
             st.error("Image generation failed. Check access to the image model.")
